@@ -8,6 +8,7 @@ import img3 from "./3.png";
 import img4 from "./4.png";
 import img5 from "./5.png";
 import img6 from "./6.png";
+import { randomWord, ENGLISH_WORDS } from "./words";
 
 
 /** Snowman game: plays hangman-style game with a melting snowman.
@@ -25,14 +26,14 @@ import img6 from "./6.png";
 
 function Snowman({
   images = [img0, img1, img2, img3, img4, img5, img6],
-  words = ["apple"],
+  words = ENGLISH_WORDS,
   maxWrong = 6,
 }) {
   /** by default, allow 6 guesses and use provided gallows images. */
 
   const [nWrong, setNWrong] = useState(0);
   const [guessedLetters, setGuessedLetters] = useState(() => new Set());
-  const [answer, setAnswer] = useState((words)[0]);
+  const [answer, setAnswer] = useState(() => randomWord(words));
 
   /** guessedWord: show current-state of word:
    if guessed letters are {a,p,e}, show "app_e" for "apple"
@@ -73,14 +74,27 @@ function Snowman({
     ));
   }
 
-  const isGameOver = nWrong === maxWrong;
+  /** restartGame: Pick a new random word, reset guessed list, and number of
+   * wrong guesses. */
+  function restartGame() {
+    setAnswer(randomWord(words));
+    setGuessedLetters(() => new Set());
+    setNWrong(0);
+  }
+
+  const lose = nWrong === maxWrong;
+  const won = answer.split("").every(ltr => guessedLetters.has(ltr))
 
   return (
     <div className="Snowman">
       <img src={(images)[nWrong]} alt={nWrong} />
       <p>Number wrong: {nWrong}</p>
       <p className="Snowman-word">{guessedWord()}</p>
-      {isGameOver ? `You lose. The word was ${answer}.` : <p>{generateButtons()}</p>}
+
+      {lose && <p>You lose. The word was {answer}.</p>}
+      {lose ? <button onClick={restartGame}>Restart</button> : <p>{generateButtons()}</p>}
+      {won && <p>You won!</p>}
+      {won && <button onClick={restartGame}>Restart</button>}
     </div>
   );
 }

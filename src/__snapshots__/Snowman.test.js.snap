@@ -180,7 +180,14 @@ exports[`should test end game on loss 1`] = `
       _
       _
     </p>
-    You lose. The word was apple.
+    <p>
+      You lose. The word was 
+      apple
+      .
+    </p>
+    <button>
+      Restart
+    </button>
   </div>
 </div>
 `;
